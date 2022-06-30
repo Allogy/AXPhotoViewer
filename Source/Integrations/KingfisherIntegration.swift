@@ -15,26 +15,16 @@ class KingfisherIntegration: NSObject, AXNetworkIntegrationProtocol {
     
     fileprivate var retrieveImageTasks: [Int: DownloadTask] = [:]
     
-    public func loadPhoto(_ photo: AXPhotoProtocol) {
-        if photo.imageData != nil || photo.image != nil {
-            AXDispatchUtils.executeInBackground { [weak self] in
-                guard let `self` = self else { return }
-                self.delegate?.networkIntegration(self, loadDidFinishWith: photo)
-            }
-            return
-        }
-        
-        guard let url = photo.url else { return }
-        
+    private func load(_ photo: AXPhotoProtocol, webURL:Url) {
         let progress: DownloadProgressBlock = { [weak self] (receivedSize, totalSize) in
             AXDispatchUtils.executeInBackground { [weak self] in
-                guard let `self` = self else { return }
+                guard let self = self else { return }
                 self.delegate?.networkIntegration?(self, didUpdateLoadingProgress: CGFloat(receivedSize) / CGFloat(totalSize), for: photo)
             }
         }
         
         let completion: ((Result<RetrieveImageResult, KingfisherError>) -> Void) = { [weak self] (result) in
-            guard let `self` = self else { return }
+            guard let self = self else { return }
             
             self.retrieveImageTasks[photo.hash] = nil
             
@@ -43,13 +33,13 @@ class KingfisherIntegration: NSObject, AXNetworkIntegrationProtocol {
                 if let imageData = retrieveImageResult.image.kf.gifRepresentation() {
                     photo.imageData = imageData
                     AXDispatchUtils.executeInBackground { [weak self] in
-                        guard let `self` = self else { return }
+                        guard let self = self else { return }
                         self.delegate?.networkIntegration(self, loadDidFinishWith: photo)
                     }
                 } else {
                     photo.image = retrieveImageResult.image
                     AXDispatchUtils.executeInBackground { [weak self] in
-                        guard let `self` = self else { return }
+                        guard let self = self else { return }
                         self.delegate?.networkIntegration(self, loadDidFinishWith: photo)
                     }
                 }
@@ -60,7 +50,7 @@ class KingfisherIntegration: NSObject, AXNetworkIntegrationProtocol {
                     userInfo: ["description": error.errorDescription ?? ""]
                 )
                 AXDispatchUtils.executeInBackground { [weak self] in
-                    guard let `self` = self else { return }
+                    guard let self = self else { return }
                     self.delegate?.networkIntegration(self, loadDidFailWith: error, for: photo)
                 }
             }
@@ -68,6 +58,48 @@ class KingfisherIntegration: NSObject, AXNetworkIntegrationProtocol {
         
         let task = KingfisherManager.shared.retrieveImage(with: url, options: nil, progressBlock: progress, completionHandler: completion)
         self.retrieveImageTasks[photo.hash] = task
+    }
+    
+    private func load(_ photo: AXPhotoProtocol, fileURL: Url) {
+        
+        let local = LocalFileImageDataProvider(fileURL: fileURL)
+        
+        AXDispatchUtils.executeInBackground { [weak self] in
+            local.data(handler: { (result) in
+                switch result {
+                case .failure(let error):
+                    AXDispatchUtils.executeInBackground { [weak self] in
+                        guard let self = self else { return }
+                        self.delegate?.networkIntegration(self, loadDidFailWith: error, for: photo)
+                    }
+                case .success(let imageData):
+                    let image = UIImage(data: imageData)
+                    photo.image = image
+                    AXDispatchUtils.executeInBackground { [weak self] in
+                        guard let self = self else { return }
+                        self.delegate?.networkIntegration(self, loadDidFinishWith: photo)
+                    }
+                }
+            })
+        }
+    }
+    
+    public func loadPhoto(_ photo: AXPhotoProtocol) {
+        if photo.imageData != nil || photo.image != nil {
+            AXDispatchUtils.executeInBackground { [weak self] in
+                guard let self = self else { return }
+                self.delegate?.networkIntegration(self, loadDidFinishWith: photo)
+            }
+            return
+        }
+        
+        guard let url = photo.url else { return }
+        
+        if url.isFileURL {
+            self.load(photo, fileURL: url)
+        } else {
+            self.load(photo, webURL: url)
+        }
     }
     
     func cancelLoad(for photo: AXPhotoProtocol) {
@@ -79,6 +111,5 @@ class KingfisherIntegration: NSObject, AXNetworkIntegrationProtocol {
         self.retrieveImageTasks.forEach({ $1.cancel() })
         self.retrieveImageTasks.removeAll()
     }
-    
 }
 #endif
