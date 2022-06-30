@@ -5,12 +5,12 @@ Pod::Spec.new do |s|
   s.summary         = "An iOS/tvOS photo gallery viewer, useful for viewing a large number of photos."
   s.homepage        = "https://github.com/alexhillc/AXPhotoViewer"
   s.author          = { "Alex Hill" => "alexhill.c@gmail.com" }
-  s.source          = { :git => "https://github.com/alexhillc/AXPhotoViewer.git", :tag => "v#{s.version}" }
+  s.source          = { :git => "https://github.com/bonebox/AXPhotoViewer.git", :tag => "v#{s.version}" }
 
   s.requires_arc    = true
 
-  s.ios.deployment_target = '8.0'
-  s.tvos.deployment_target = '9.0'
+  s.ios.deployment_target = '10.0'
+  s.tvos.deployment_target = '10.0'
 
   s.default_subspec = 'Core'
 
@@ -29,24 +29,24 @@ Pod::Spec.new do |s|
   end
 
   s.subspec 'SDWebImage' do |ss|
-    ss.ios.deployment_target = '8.0'
-    ss.tvos.deployment_target = '9.0'
+    ss.ios.deployment_target = '10.0'
+    ss.tvos.deployment_target = '10.0'
     ss.dependency      'AXPhotoViewer/Core'
     ss.dependency      'SDWebImage', '>= 4.0.0'
     ss.source_files  = 'Source/Integrations/SDWebImageIntegration.swift'
   end
 
   s.subspec 'PINRemoteImage' do |ps|
-    ps.ios.deployment_target = '8.0'
-    ps.tvos.deployment_target = '9.0'
+    ps.ios.deployment_target = '10.0'
+    ps.tvos.deployment_target = '10.0'
     ps.dependency      'AXPhotoViewer/Core'
     ps.dependency      'PINRemoteImage', '~> 3.0.0-beta.9'
     ps.source_files  = 'Source/Integrations/PINRemoteImageIntegration.swift'
   end
 
   s.subspec 'AFNetworking' do |as|
-    as.ios.deployment_target = '8.0'
-    as.tvos.deployment_target = '9.0'
+    as.ios.deployment_target = '10.0'
+    as.tvos.deployment_target = '10.0'
     as.dependency      'AXPhotoViewer/Core'
     as.dependency      'AFNetworking/NSURLSession', '>= 3.1.0'
     as.source_files  = 'Source/Integrations/AFNetworkingIntegration.swift'
