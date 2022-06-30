@@ -105,7 +105,7 @@ import UIKit
     
 }
 
-@objc protocol AXStackableViewContainerDelegate: class {
+@objc protocol AXStackableViewContainerDelegate: AnyObject {
     
     @objc optional func stackableViewContainer(_ stackableViewContainer: AXStackableViewContainer, didAddSubview: UIView)
     @objc optional func stackableViewContainer(_ stackableViewContainer: AXStackableViewContainer, willRemoveSubview: UIView)

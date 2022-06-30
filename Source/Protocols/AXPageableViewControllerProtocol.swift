@@ -6,7 +6,7 @@
 //  Copyright © 2017 Alex Hill. All rights reserved.
 //
 
-@objc protocol AXPageableViewControllerProtocol: class {
+@objc protocol AXPageableViewControllerProtocol: AnyObject {
     
     var pageIndex: Int { get set }
     

@@ -206,6 +206,6 @@ class AXZoomingImageView: UIScrollView, UIScrollViewDelegate {
 
 }
 
-protocol AXZoomingImageViewDelegate: class {
+protocol AXZoomingImageViewDelegate: AnyObject {
     func zoomingImageView(_ zoomingImageView: AXZoomingImageView, maximumZoomScaleFor imageSize: CGSize) -> CGFloat
 }

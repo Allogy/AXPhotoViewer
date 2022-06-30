@@ -31,7 +31,7 @@ class AXPhotosTransitionAnimator: NSObject, UIViewControllerAnimatedTransitionin
 
 }
 
-protocol AXPhotosTransitionAnimatorDelegate: class {
+protocol AXPhotosTransitionAnimatorDelegate: AnyObject {
     func transitionAnimator(_ animator: AXPhotosTransitionAnimator, didCompletePresentationWith transitionView: UIImageView)
     func transitionAnimator(_ animator: AXPhotosTransitionAnimator, didCompleteDismissalWith transitionView: UIImageView)
     func transitionAnimatorDidCancelDismissal(_ animator: AXPhotosTransitionAnimator)

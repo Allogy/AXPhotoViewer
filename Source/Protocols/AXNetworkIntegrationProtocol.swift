@@ -9,7 +9,7 @@
 let AXNetworkIntegrationErrorDomain = "AXNetworkIntegrationErrorDomain"
 let AXNetworkIntegrationFailedToLoadErrorCode = 6
 
-@objc public protocol AXNetworkIntegrationProtocol: AnyObject, NSObjectProtocol {
+@objc public protocol AXNetworkIntegrationProtocol: NSObjectProtocol {
     
     @objc var delegate: AXNetworkIntegrationDelegate? { get set }
     
@@ -28,7 +28,7 @@ let AXNetworkIntegrationFailedToLoadErrorCode = 6
     
 }
 
-@objc public protocol AXNetworkIntegrationDelegate: AnyObject, NSObjectProtocol {
+@objc public protocol AXNetworkIntegrationDelegate: NSObjectProtocol {
     
     /// Called when a `AXPhoto` successfully finishes loading.
     ///

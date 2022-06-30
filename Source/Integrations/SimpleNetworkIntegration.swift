@@ -181,7 +181,7 @@ fileprivate class SimpleNetworkIntegrationURLSessionWrapper: NSObject, URLSessio
     
 }
 
-fileprivate protocol SimpleNetworkIntegrationURLSessionWrapperDelegate: NSObjectProtocol, AnyObject {
+fileprivate protocol SimpleNetworkIntegrationURLSessionWrapperDelegate: AnyObject {
     
     func urlSessionWrapper(_ urlSessionWrapper: SimpleNetworkIntegrationURLSessionWrapper,
                            dataTask: URLSessionDataTask,

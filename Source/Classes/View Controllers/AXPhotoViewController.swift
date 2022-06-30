@@ -183,7 +183,7 @@ import FLAnimatedImage_tvOS
 
 }
 
-@objc public protocol AXPhotoViewControllerDelegate: AnyObject, NSObjectProtocol {
+@objc public protocol AXPhotoViewControllerDelegate: NSObjectProtocol {
     
     @objc(photoViewController:retryDownloadForPhoto:)
     func photoViewController(_ photoViewController: AXPhotoViewController, retryDownloadFor photo: AXPhotoProtocol)

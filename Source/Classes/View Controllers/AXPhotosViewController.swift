@@ -1202,7 +1202,7 @@ fileprivate extension UIScrollView {
 }
 
 // MARK: - AXPhotosViewControllerDelegate
-@objc public protocol AXPhotosViewControllerDelegate: AnyObject, NSObjectProtocol {
+@objc public protocol AXPhotosViewControllerDelegate: NSObjectProtocol {
     
     /// Called when the `AXPhotosViewController` navigates to a new photo. This is defined as when the swipe percent between pages
     /// is greater than the threshold (>0.5).

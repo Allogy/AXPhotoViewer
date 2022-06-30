@@ -158,7 +158,7 @@ class AXPhotosTransitionController: NSObject, UIViewControllerTransitioningDeleg
     
 }
 
-protocol AXPhotosTransitionControllerDelegate: class {
+protocol AXPhotosTransitionControllerDelegate: AnyObject {
     func transitionController(_ transitionController: AXPhotosTransitionController, didCompletePresentationWith transitionView: UIImageView)
     func transitionController(_ transitionController: AXPhotosTransitionController, didCompleteDismissalWith transitionView: UIImageView)
     func transitionControllerDidCancelDismissal(_ transitionController: AXPhotosTransitionController)
