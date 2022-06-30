@@ -160,9 +160,7 @@ class TableViewController: UITableViewController, AXPhotosViewControllerDelegate
             // adjusting the reference view attached to our transition info to allow for contextual animation
             return cell.contentView.viewWithTag(666) as? FLAnimatedImageView
         }
-        
-        let container = UIViewController()
-        
+                
         let dataSource = AXPhotosDataSource(photos: self.photos, initialPhotoIndex: indexPath.row)
         let pagingConfig = AXPagingConfig(loadingViewClass: CustomLoadingView.self)
         let photosViewController = AXPhotosViewController(dataSource: dataSource, pagingConfig: pagingConfig, transitionInfo: transitionInfo)
