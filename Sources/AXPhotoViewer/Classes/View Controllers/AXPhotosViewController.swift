@@ -8,12 +8,7 @@
 
 import UIKit
 import MobileCoreServices
-
-#if os(iOS)
 import FLAnimatedImage
-#elseif os(tvOS)
-import FLAnimatedImage_tvOS
-#endif
 
 @objc open class AXPhotosViewController: UIViewController, UIPageViewControllerDelegate,
                                                            UIPageViewControllerDataSource,
@@ -22,7 +17,6 @@ import FLAnimatedImage_tvOS
                                                            AXNetworkIntegrationDelegate,
                                                            AXPhotosTransitionControllerDelegate {
     
-    #if os(iOS)
     /// The close bar button item that is initially set in the overlay's toolbar. Any 'target' or 'action' provided to this button will be overwritten.
     /// Overriding this is purely for customizing the look and feel of the button.
     /// Alternatively, you may create your own `UIBarButtonItem`s and directly set them _and_ their actions on the `overlayView` property.
@@ -56,7 +50,6 @@ import FLAnimatedImage_tvOS
             return .lightContent
         }
     }
-    #endif
     
     @objc open weak var delegate: AXPhotosViewControllerDelegate?
     
@@ -223,18 +216,14 @@ import FLAnimatedImage_tvOS
                         networkIntegration: networkIntegration)
     }
     
-    #if os(iOS)
     @objc(initFromPreviewingPhotosViewController:)
     public init(from previewingPhotosViewController: AXPreviewingPhotosViewController) {
         super.init(nibName: nil, bundle: nil)
         self.commonInit(dataSource: previewingPhotosViewController.dataSource,
                         networkIntegration: previewingPhotosViewController.networkIntegration)
         
-        if #available(iOS 9.0, *) {
-            self.loadViewIfNeeded()
-        } else {
-            let _ = self.view
-        }
+		self.loadViewIfNeeded()
+
         
         self.currentPhotoViewController?.zoomingImageView.imageView.ax_syncFrames(with: previewingPhotosViewController.imageView)
     }
@@ -248,12 +237,8 @@ import FLAnimatedImage_tvOS
                         pagingConfig: pagingConfig,
                         networkIntegration: previewingPhotosViewController.networkIntegration)
         
-        if #available(iOS 9.0, *) {
-            self.loadViewIfNeeded()
-        } else {
-            let _ = self.view
-        }
-        
+		self.loadViewIfNeeded()
+
         self.currentPhotoViewController?.zoomingImageView.imageView.ax_syncFrames(with: previewingPhotosViewController.imageView)
     }
     
@@ -268,15 +253,10 @@ import FLAnimatedImage_tvOS
                         transitionInfo: transitionInfo,
                         networkIntegration: previewingPhotosViewController.networkIntegration)
         
-        if #available(iOS 9.0, *) {
-            self.loadViewIfNeeded()
-        } else {
-            let _ = self.view
-        }
-        
+		self.loadViewIfNeeded()
+
         self.currentPhotoViewController?.zoomingImageView.imageView.ax_syncFrames(with: previewingPhotosViewController.imageView)
     }
-    #endif
     
     @objc public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -311,33 +291,14 @@ import FLAnimatedImage_tvOS
         if let transitionInfo = transitionInfo {
             self.transitionInfo = transitionInfo
             
-            #if os(iOS)
             if transitionInfo.interactiveDismissalEnabled {
                 self.panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPanWithGestureRecognizer(_:)))
                 self.panGestureRecognizer?.maximumNumberOfTouches = 1
                 self.panGestureRecognizer?.delegate = self
             }
-            #endif
         }
         
-        var `networkIntegration` = networkIntegration
-        if networkIntegration == nil {
-            #if canImport(SDWebImage)
-            networkIntegration = SDWebImageIntegration()
-            #elseif canImport(PINRemoteImage)
-            networkIntegration = PINRemoteImageIntegration()
-            #elseif canImport(AFNetworking)
-            networkIntegration = AFNetworkingIntegration()
-            #elseif canImport(Kingfisher)
-            networkIntegration = KingfisherIntegration()
-            #elseif canImport(Nuke)
-            networkIntegration = NukeIntegration()
-            #else
-            networkIntegration = SimpleNetworkIntegration()
-            #endif
-        }
-        
-        self.networkIntegration = networkIntegration
+        self.networkIntegration = SimpleNetworkIntegration()
         self.networkIntegration.delegate = self
         
         self.pageViewController = UIPageViewController(transitionStyle: .scroll,
@@ -354,7 +315,6 @@ import FLAnimatedImage_tvOS
         self.overlayView.tintColor = .white
         self.overlayView.setShowInterface(false, animated: false)
         
-        #if os(iOS)
         let closeBarButtonItem = self.closeBarButtonItem
         closeBarButtonItem.target = self
         closeBarButtonItem.action = #selector(closeAction(_:))
@@ -364,7 +324,6 @@ import FLAnimatedImage_tvOS
         actionBarButtonItem.target = self
         actionBarButtonItem.action = #selector(shareAction(_:))
         self.overlayView.rightBarButtonItem = actionBarButtonItem
-        #endif
     }
     
     deinit {
@@ -390,11 +349,9 @@ import FLAnimatedImage_tvOS
         self.transitionController = AXPhotosTransitionController(transitionInfo: self.transitionInfo)
         self.transitionController?.delegate = self
         
-        #if os(iOS)
         if let panGestureRecognizer = self.panGestureRecognizer {
             self.pageViewController.view.addGestureRecognizer(panGestureRecognizer)
         }
-        #endif
         
         if let containerViewController = self.containerViewController {
             containerViewController.transitioningDelegate = self.transitionController
@@ -423,9 +380,7 @@ import FLAnimatedImage_tvOS
             self.overlayView.setShowInterface(visible, animated: true, alongside: { [weak self] in
                 guard let `self` = self else { return }
                 
-                #if os(iOS)
                 self.updateStatusBarAppearance(show: visible)
-                #endif
                 
                 self.overlayView(self.overlayView, visibilityWillChange: visible)
             })
@@ -498,9 +453,7 @@ import FLAnimatedImage_tvOS
             
             if canceled {
                 self.transitionController?.forceInteractiveDismissal = false
-                #if os(iOS)
                 self.panGestureRecognizer?.isEnabled = true
-                #endif
             } else {
                 self.delegate?.photosViewControllerDidDismiss?(self)
             }
@@ -538,9 +491,7 @@ import FLAnimatedImage_tvOS
             self.pageViewController.setViewControllers([viewController], direction: .forward, animated: false, completion: nil)
             self.currentPhotoIndex = pageIndex
             
-            #if os(iOS)
             self.overlayView.titleView?.tweenBetweenLowIndex?(pageIndex, highIndex: pageIndex + 1, percent: 0)
-            #endif
         }
         
         guard let photoViewController = self.makePhotoViewController(for: self.dataSource.initialPhotoIndex) else {
@@ -558,40 +509,17 @@ import FLAnimatedImage_tvOS
         
         self.willUpdate(overlayView: self.overlayView, for: photo, at: photoIndex, totalNumberOfPhotos: self.dataSource.numberOfPhotos)
         
-        #if os(iOS)
         if self.dataSource.numberOfPhotos > 1 {
             self.overlayView.internalTitle = String.localizedStringWithFormat(NSLocalizedString("%d of %d", comment: ""), photoIndex + 1, self.dataSource.numberOfPhotos)
         } else {
             self.overlayView.internalTitle = nil
         }
-        #endif
         
         self.overlayView.updateCaptionView(photo: photo)
     }
     
     fileprivate func updateOverlayInsets() {
-        var contentInset: UIEdgeInsets
-        if #available(iOS 11.0, tvOS 11.0, *) {
-            contentInset = self.view.safeAreaInsets
-        } else {
-            #if os(iOS)
-            contentInset = UIEdgeInsets(
-                top: (UIApplication.shared.statusBarFrame.size.height > 0) ? 20 : 0,
-                left: 0,
-                bottom: 0,
-                right: 0
-            )
-            #else
-            contentInset = UIEdgeInsets(
-                top: 60,
-                left: 90,
-                bottom: 60,
-                right: 90
-            )
-            #endif
-        }
-        
-        self.overlayView.contentInset = contentInset
+        self.overlayView.contentInset = self.view.safeAreaInsets
     }
 
     // MARK: - Gesture recognizers
@@ -600,15 +528,12 @@ import FLAnimatedImage_tvOS
         self.overlayView.setShowInterface(show, animated: true, alongside: { [weak self] in
             guard let `self` = self else { return }
             
-            #if os(iOS)
             self.updateStatusBarAppearance(show: show)
-            #endif
             
             self.overlayView(self.overlayView, visibilityWillChange: show)
         })
     }
     
-    #if os(iOS)
     @objc fileprivate func didPanWithGestureRecognizer(_ sender: UIPanGestureRecognizer) {
         if sender.state == .began {
             self.transitionController?.forceInteractiveDismissal = true
@@ -664,7 +589,6 @@ import FLAnimatedImage_tvOS
         self.transitionController?.forceInteractiveDismissal = false
         self.dismiss(animated: true)
     }
-    #endif
     
     // MARK: - Loading helpers
     fileprivate func loadPhotos(at index: Int) {
@@ -727,9 +651,7 @@ import FLAnimatedImage_tvOS
             photoViewController.addLifecycleObserver(self)
             photoViewController.delegate = self
             
-            #if os(iOS)
             self.singleTapGestureRecognizer.require(toFail: photoViewController.zoomingImageView.doubleTapGestureRecognizer)
-            #endif
         }
         
         photoViewController.pageIndex = pageIndex
@@ -799,12 +721,7 @@ import FLAnimatedImage_tvOS
             horizontalSwipeDirection = .left
         }
         
-        let layoutDirection: UIUserInterfaceLayoutDirection
-        if #available(iOS 9.0, tvOS 9.0, *) {
-            layoutDirection = UIView.userInterfaceLayoutDirection(for: self.pageViewController.view.semanticContentAttribute)
-        } else {
-            layoutDirection = .leftToRight
-        }
+        let layoutDirection: UIUserInterfaceLayoutDirection = UIView.userInterfaceLayoutDirection(for: self.pageViewController.view.semanticContentAttribute)
         
         let swipePercent: CGFloat
         if horizontalSwipeDirection == .left {
@@ -867,9 +784,7 @@ import FLAnimatedImage_tvOS
             }
         }
         
-        #if os(iOS)
         self.overlayView.titleView?.tweenBetweenLowIndex?(lowIndex, highIndex: highIndex, percent: percent)
-        #endif
     }
     
     fileprivate func computeVisibleViewControllers(in referenceView: UIScrollView) -> [AXPhotoViewController] {
@@ -1017,7 +932,6 @@ import FLAnimatedImage_tvOS
                                                     imageSize: imageSize) ?? .leastNormalMagnitude
     }
     
-    #if os(iOS)
     /// Called when the action button is tapped for a photo. If you override this and fail to call super, the corresponding
     /// delegate method **will not be called!**
     ///
@@ -1046,7 +960,6 @@ import FLAnimatedImage_tvOS
     open func actionCompleted(activityType: UIActivity.ActivityType, for photo: AXPhotoProtocol) {
         self.delegate?.photosViewController?(self, actionCompletedWith: activityType, for: photo)
     }
-    #endif
     
     // MARK: - AXNetworkIntegrationDelegate
     public func networkIntegration(_ networkIntegration: AXNetworkIntegrationProtocol, loadDidFinishWith photo: AXPhotoProtocol) {
@@ -1261,7 +1174,6 @@ fileprivate extension UIScrollView {
                                        minimumZoomScale: CGFloat,
                                        imageSize: CGSize) -> CGFloat
     
-    #if os(iOS)
     /// Called when the action button is tapped for a photo. If no implementation is provided, will fall back to default action.
     ///
     /// - Parameters:
@@ -1281,7 +1193,6 @@ fileprivate extension UIScrollView {
     optional func photosViewController(_ photosViewController: AXPhotosViewController, 
                                        actionCompletedWith activityType: UIActivity.ActivityType, 
                                        for photo: AXPhotoProtocol)
-    #endif
     
     /// Called just before the `AXPhotosViewController` begins its dismissal
     ///

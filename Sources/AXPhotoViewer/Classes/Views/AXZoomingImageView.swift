@@ -8,20 +8,14 @@
 
 import UIKit
 
-#if os(iOS)
 import FLAnimatedImage
-#elseif os(tvOS)
-import FLAnimatedImage_tvOS
-#endif
 
 fileprivate let ZoomScaleEpsilon: CGFloat = 0.01
 
 class AXZoomingImageView: UIScrollView, UIScrollViewDelegate {
     
-    #if os(iOS)
     /// iOS-only tap gesture recognizer for zooming.
     fileprivate(set) var doubleTapGestureRecognizer = UITapGestureRecognizer()
-    #endif
     
     weak var zoomScaleDelegate: AXZoomingImageViewDelegate?
     
@@ -56,12 +50,10 @@ class AXZoomingImageView: UIScrollView, UIScrollViewDelegate {
     init() {
         super.init(frame: .zero)
         
-        #if os(iOS)
         self.doubleTapGestureRecognizer.numberOfTapsRequired = 2
         self.doubleTapGestureRecognizer.addTarget(self, action: #selector(doubleTapAction(_:)))
         self.doubleTapGestureRecognizer.isEnabled = false
         self.addGestureRecognizer(self.doubleTapGestureRecognizer)
-        #endif
         
         self.imageView.layer.masksToBounds = true
         self.imageView.contentMode = .scaleAspectFit
@@ -75,9 +67,7 @@ class AXZoomingImageView: UIScrollView, UIScrollViewDelegate {
         self.decelerationRate = .fast
         self.delegate = self
         
-        if #available(iOS 11.0, tvOS 11.0, *) {
-            self.contentInsetAdjustmentBehavior = .never
-        }
+		self.contentInsetAdjustmentBehavior = .never
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -107,9 +97,7 @@ class AXZoomingImageView: UIScrollView, UIScrollViewDelegate {
         self.contentSize = imageSize
         self.updateZoomScale()
         
-        #if os(iOS)
         self.doubleTapGestureRecognizer.isEnabled = (image != nil || animatedImage != nil)
-        #endif
         
         self.needsUpdateImageView = false
     }
@@ -180,7 +168,6 @@ class AXZoomingImageView: UIScrollView, UIScrollViewDelegate {
         self.isScrollEnabled = false
     }
     
-    #if os(iOS)
     // MARK: - UITapGestureRecognizer
     @objc fileprivate func doubleTapAction(_ sender: UITapGestureRecognizer) {
         let point = sender.location(in: self.imageView)
@@ -202,7 +189,6 @@ class AXZoomingImageView: UIScrollView, UIScrollViewDelegate {
         let zoomRect = CGRect(x: originX, y: originY, width: width, height: height)
         self.zoom(to: zoomRect, animated: true)
     }
-    #endif
 
 }
 

@@ -6,7 +6,6 @@
 //  Copyright © 2017 Alex Hill. All rights reserved.
 //
 
-#if os(iOS)
 import UIKit
 import MobileCoreServices
 import FLAnimatedImage
@@ -58,25 +57,8 @@ import FLAnimatedImage
                                 networkIntegration: AXNetworkIntegrationProtocol? = nil) {
         
         self.dataSource = dataSource
-
-        var `networkIntegration` = networkIntegration
-        if networkIntegration == nil {
-            #if canImport(SDWebImage)
-            networkIntegration = SDWebImageIntegration()
-            #elseif canImport(PINRemoteImage)
-            networkIntegration = PINRemoteImageIntegration()
-            #elseif canImport(AFNetworking)
-            networkIntegration = AFNetworkingIntegration()
-            #elseif canImport(Kingfisher)
-            networkIntegration = KingfisherIntegration()
-            #elseif canImport(Nuke)
-            networkIntegration = NukeIntegration()
-            #else
-            networkIntegration = SimpleNetworkIntegration()
-            #endif
-        }
         
-        self.networkIntegration = networkIntegration
+        self.networkIntegration = SimpleNetworkIntegration()
         self.networkIntegration.delegate = self
     }
     
@@ -147,4 +129,3 @@ import FLAnimatedImage
     }
     
 }
-#endif

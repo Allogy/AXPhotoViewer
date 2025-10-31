@@ -7,7 +7,6 @@
 
 import UIKit
 
-#if os(iOS)
 import AXStateButton
 @objc open class AXButton: StateButton {
     
@@ -28,4 +27,3 @@ import AXStateButton
     }
     
 }
-#endif

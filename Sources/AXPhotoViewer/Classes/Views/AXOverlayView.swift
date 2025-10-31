@@ -10,7 +10,6 @@ import UIKit
 
 @objc open class AXOverlayView: UIView, AXStackableViewContainerDelegate {
     
-    #if os(iOS)
     /// The toolbar used to set the `titleView`, `leftBarButtonItems`, `rightBarButtonItems`
     @objc public let toolbar = UIToolbar(frame: CGRect(origin: .zero, size: CGSize(width: 320, height: 44)))
     
@@ -106,7 +105,6 @@ import UIKit
             self.updateToolbarBarButtonItems()
         }
     }
-    #endif
     
     /// The caption view to be used in the overlay.
     @objc open var captionView: AXCaptionViewProtocol = AXCaptionView() {
@@ -167,11 +165,9 @@ import UIKit
         self.topStackContainer.delegate = self
         self.addSubview(self.topStackContainer)
         
-        #if os(iOS)
         self.toolbar.backgroundColor = .clear
         self.toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
         self.topStackContainer.addSubview(self.toolbar)
-        #endif
         
         self.bottomStackContainer = AXStackableViewContainer(views: [], anchoredAt: .bottom)
         self.bottomStackContainer.backgroundColor = AXConstants.overlayForegroundColor
@@ -199,11 +195,9 @@ import UIKit
     open override func didMoveToWindow() {
         super.didMoveToWindow()
         
-        #if os(iOS)
         if self.window != nil {
             self.updateToolbarBarButtonItems()
         }
-        #endif
     }
     
     open override func layoutSubviews() {
@@ -327,7 +321,6 @@ import UIKit
         }
     }
     
-    #if os(iOS)
     // MARK: - UIToolbar convenience
     func updateToolbarBarButtonItems() {
         let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
@@ -382,12 +375,7 @@ import UIKit
     func updateTitleBarButtonItem() {
         func defaultAttributes() -> [NSAttributedString.Key: Any] {
             let pointSize: CGFloat = 17.0
-            var font: UIFont
-            if #available(iOS 8.2, *) {
-                font = UIFont.systemFont(ofSize: pointSize, weight: UIFont.Weight.semibold)
-            } else {
-                font = UIFont(name: "HelveticaNeue-Medium", size: pointSize)!
-            }
+            let font = UIFont.systemFont(ofSize: pointSize, weight: UIFont.Weight.semibold)
             
             return [
                 NSAttributedString.Key.font: font,
@@ -412,7 +400,6 @@ import UIKit
             }
         }
     }
-    #endif
     
 }
 

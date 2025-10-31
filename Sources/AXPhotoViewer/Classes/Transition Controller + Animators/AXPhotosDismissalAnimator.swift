@@ -7,15 +7,10 @@
 
 import UIKit
 
-#if os(iOS)
 import FLAnimatedImage
-#elseif os(tvOS)
-import FLAnimatedImage_tvOS
-#endif
 
 class AXPhotosDismissalAnimator: AXPhotosTransitionAnimator, UIViewControllerInteractiveTransitioning {
     
-    #if os(iOS)
     /// The distance threshold at which the interactive controller will dismiss upon end touches.
     fileprivate let dismissalPercentThreshold: CGFloat = 0.14
     
@@ -41,7 +36,6 @@ class AXPhotosDismissalAnimator: AXPhotosTransitionAnimator, UIViewControllerInt
     fileprivate var topStackContainerInitialOriginY: CGFloat = .greatestFiniteMagnitude
     fileprivate var bottomStackContainerInitialOriginY: CGFloat = .greatestFiniteMagnitude
     fileprivate var overlayViewOriginalSuperview: UIView?
-    #endif
     
     /// Pending animations that can occur when interactive dismissal has not been triggered by the system,
     /// but our pan gesture recognizer is receiving touch events. Processed as soon as the interactive dismissal has been set up.
@@ -211,7 +205,6 @@ class AXPhotosDismissalAnimator: AXPhotosTransitionAnimator, UIViewControllerInt
             scaleAnimationOptions = [.curveEaseInOut, .beginFromCurrentState, .allowAnimatedContent]
             scaleInitialSpringVelocity = 0
         } else {
-            #if os(iOS)
             let extrapolated = self.extrapolateFinalCenter(for: imageViewContainer, in: transitionContext.containerView)
             offscreenImageViewCenter = extrapolated.center
             
@@ -230,10 +223,6 @@ class AXPhotosDismissalAnimator: AXPhotosTransitionAnimator, UIViewControllerInt
                 scaleAnimationOptions = [.curveLinear, .beginFromCurrentState, .allowAnimatedContent]
                 scaleInitialSpringVelocity = abs(self.dismissalVelocityY / divisor)
             }
-            #else
-            scaleAnimationOptions = [.curveEaseInOut, .beginFromCurrentState, .allowAnimatedContent]
-            scaleInitialSpringVelocity = 0
-            #endif
         }
         
         UIView.animate(
@@ -266,7 +255,6 @@ class AXPhotosDismissalAnimator: AXPhotosTransitionAnimator, UIViewControllerInt
     
     // MARK: - UIViewControllerInteractiveTransitioning
     func startInteractiveTransition(_ transitionContext: UIViewControllerContextTransitioning) {
-        #if os(iOS)
         self.dismissalTransitionContext = transitionContext
         
         guard let to = transitionContext.viewController(forKey: .to),
@@ -378,12 +366,8 @@ class AXPhotosDismissalAnimator: AXPhotosTransitionAnimator, UIViewControllerInt
         }
         
         self.processPendingChanges()
-        #else
-        fatalError("Interactive animations are not supported on tvOS.")
-        #endif
     }
     
-    #if os(iOS)
     // MARK: - Cancel interactive transition
     fileprivate func cancelTransition(using transitionContext: UIViewControllerContextTransitioning) {
         guard let from = transitionContext.viewController(forKey: .from) else {
@@ -707,7 +691,6 @@ class AXPhotosDismissalAnimator: AXPhotosTransitionAnimator, UIViewControllerInt
             return (viewCenter, viewCenter.y)
         }
     }
-    #endif
     
     // MARK: - Helpers
     fileprivate func canPerformContextualDismissal() -> Bool {
@@ -720,14 +703,10 @@ class AXPhotosDismissalAnimator: AXPhotosTransitionAnimator, UIViewControllerInt
     
     /// Gets the current interface orientation from the window scene, falling back to status bar orientation on older iOS versions
     fileprivate func currentInterfaceOrientation() -> UIInterfaceOrientation {
-        if #available(iOS 13.0, *) {
-            return UIApplication.shared.connectedScenes
-                .compactMap { $0 as? UIWindowScene }
-                .first?
-                .interfaceOrientation ?? .portrait
-        } else {
-            return UIApplication.shared.statusBarOrientation
-        }
+		return UIApplication.shared.connectedScenes
+			.compactMap { $0 as? UIWindowScene }
+			.first?
+			.interfaceOrientation ?? .portrait
     }
     
     fileprivate func processPendingChanges() {

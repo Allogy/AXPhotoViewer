@@ -8,11 +8,7 @@
 
 import UIKit
 
-#if os(iOS)
 import FLAnimatedImage
-#elseif os(tvOS)
-import FLAnimatedImage_tvOS
-#endif
 
 class AXPhotosTransitionController: NSObject, UIViewControllerTransitioningDelegate, AXPhotosTransitionAnimatorDelegate {
     
@@ -50,11 +46,7 @@ class AXPhotosTransitionController: NSObject, UIViewControllerTransitioningDeleg
     
     fileprivate var supportsInteractiveDismissal: Bool {
         get {
-            #if os(iOS)
             return self.transitionInfo.interactiveDismissalEnabled
-            #else
-            return false
-            #endif
         }
     }
     
@@ -133,12 +125,10 @@ class AXPhotosTransitionController: NSObject, UIViewControllerTransitioningDeleg
         return self.dismissalAnimator
     }
     
-    #if os(iOS)
     // MARK: - Interaction handling
     public func didPanWithGestureRecognizer(_ sender: UIPanGestureRecognizer, in viewController: UIViewController) {
         self.dismissalAnimator?.didPanWithGestureRecognizer(sender, in: viewController)
     }
-    #endif
     
     // MARK: - AXPhotosTransitionAnimatorDelegate
     func transitionAnimator(_ animator: AXPhotosTransitionAnimator, didCompletePresentationWith transitionView: UIImageView) {

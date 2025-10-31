@@ -11,7 +11,6 @@ import UIKit
 
 @objc open class AXLoadingView: UIView, AXLoadingViewProtocol {
     
-    #if os(iOS)
     @objc open fileprivate(set) var retryButton: AXButton?
     
     /// The error text to show inside of the `retryButton` when displaying an error.
@@ -22,21 +21,11 @@ import UIKit
     /// The attributes that will get applied to the `retryText` when displaying an error.
     @objc open var retryAttributes: [NSAttributedString.Key: Any] {
         get {
-            var fontDescriptor: UIFontDescriptor
-            if #available(iOS 10.0, tvOS 10.0, *) {
-                fontDescriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body,
+			let fontDescriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body,
                                                                           compatibleWith: self.traitCollection)
-            } else {
-                fontDescriptor = UIFont.preferredFont(forTextStyle: .body).fontDescriptor
-            }
             
-            var font: UIFont
-            if #available(iOS 8.2, *) {
-                font = UIFont.systemFont(ofSize: fontDescriptor.pointSize, weight: UIFont.Weight.light)
-            } else {
-                font = UIFont(name: "HelveticaNeue-Light", size: fontDescriptor.pointSize)!
-            }
-            
+			let font = UIFont.systemFont(ofSize: fontDescriptor.pointSize, weight: UIFont.Weight.light)
+
             return [
                 NSAttributedString.Key.font: font,
                 NSAttributedString.Key.foregroundColor: UIColor.white
@@ -45,7 +34,6 @@ import UIKit
     }
     
     @objc public fileprivate(set) var retryHandler: (() -> Void)?
-    #endif
     
 	@objc open fileprivate(set) lazy var indicatorView: UIView = UIActivityIndicatorView(style: .medium)
     
@@ -70,20 +58,10 @@ import UIKit
     /// The attributes that will get applied to the `errorText` when displaying an error.
     @objc open var errorAttributes: [NSAttributedString.Key: Any] {
         get {
-            var fontDescriptor: UIFontDescriptor
-            if #available(iOS 10.0, tvOS 10.0, *) {
-                fontDescriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body,
+			let fontDescriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body,
                                                                           compatibleWith: self.traitCollection)
-            } else {
-                fontDescriptor = UIFont.preferredFont(forTextStyle: .body).fontDescriptor
-            }
             
-            var font: UIFont
-            if #available(iOS 8.2, *) {
-                font = UIFont.systemFont(ofSize: fontDescriptor.pointSize, weight: UIFont.Weight.light)
-            } else {
-                font = UIFont(name: "HelveticaNeue-Light", size: fontDescriptor.pointSize)!
-            }
+			let font = UIFont.systemFont(ofSize: fontDescriptor.pointSize, weight: UIFont.Weight.light)
             
             return [
                 NSAttributedString.Key.font: font,
@@ -147,7 +125,6 @@ import UIKit
             
             // on iOS, we want the button to be sized to its label,
             // on tvOS, we want the button to be sized to its original size for the focus effect
-            #if os(iOS)
             if let retryButton = self.retryButton {
                 retryButton.setAttributedTitle(makeAttributedStringWithAttributes(self.retryAttributes,
                                                                                   for: retryButton.attributedTitle(for: .normal)),
@@ -160,7 +137,6 @@ import UIKit
                 totalHeight += retryButtonSize.height
                 totalHeight += VerticalPadding
             }
-            #endif
         } else {
             indicatorViewSize = self.indicatorView.sizeThatFits(constrainedSize)
             totalHeight += indicatorViewSize.height
@@ -182,7 +158,6 @@ import UIKit
                                                           y: floor(yOffset)),
                                           size: errorLabelSize)
                 
-                #if os(iOS)
                 if let retryButton = self.retryButton {
                     yOffset += errorLabelSize.height
                     yOffset += VerticalPadding
@@ -192,7 +167,6 @@ import UIKit
                                                size: retryButtonSize)
                     retryButton.setCornerRadius(retryButtonSize.height / 4.0, for: .normal)
                 }
-                #endif
             } else {
                 self.indicatorView.frame = CGRect(origin: CGPoint(x: floor((constrainedSize.width - indicatorViewSize.width) / 2),
                                                                   y: floor(yOffset)),
@@ -243,7 +217,6 @@ import UIKit
         self.errorLabel?.textColor = .white
         self.addSubview(self.errorLabel!)
         
-        #if os(iOS)
         self.retryHandler = retryHandler
         	
         self.retryButton = AXButton()
@@ -251,7 +224,6 @@ import UIKit
                                              for: .normal)
         self.retryButton?.addTarget(self, action: #selector(retryButtonAction(_:)), for: .touchUpInside)
         self.addSubview(self.retryButton!)
-        #endif
         
         self.setNeedsLayout()
     }
@@ -267,22 +239,18 @@ import UIKit
             self.errorLabel = nil
         }
         
-        #if os(iOS)
         if let retryButton = self.retryButton {
             retryButton.removeFromSuperview()
             self.retryButton = nil
         }
         
         self.retryHandler = nil
-        #endif
     }
     
-    #if os(iOS)
     // MARK: - Button actions
     @objc fileprivate func retryButtonAction(_ sender: AXButton) {
         self.retryHandler?()
         self.retryHandler = nil
     }
-    #endif
     
 }

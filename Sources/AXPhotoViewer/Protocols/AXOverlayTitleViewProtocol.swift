@@ -8,7 +8,6 @@
 
 import Foundation
 
-#if os(iOS)
 @objc public protocol AXOverlayTitleViewProtocol: NSObjectProtocol {
     
     /// This method is called by the `AXOverlayView`'s toolbar in order to size the view appropriately for display.
@@ -24,4 +23,3 @@ import Foundation
     @objc optional func tweenBetweenLowIndex(_ low: Int, highIndex high: Int, percent: CGFloat)
 
 }
-#endif

@@ -88,15 +88,13 @@ class TableViewController: UITableViewController, AXPhotosViewControllerDelegate
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         
-        if #available(iOS 9.0, *) {
-            if self.traitCollection.forceTouchCapability == .available {
-                if self.previewingContext == nil {
-                    self.previewingContext = self.registerForPreviewing(with: self, sourceView: self.tableView)
-                }
-            } else if let previewingContext = self.previewingContext {
-                self.unregisterForPreviewing(withContext: previewingContext)
-            }
-        }
+		if self.traitCollection.forceTouchCapability == .available {
+			if self.previewingContext == nil {
+				self.previewingContext = self.registerForPreviewing(with: self, sourceView: self.tableView)
+			}
+		} else if let previewingContext = self.previewingContext {
+			self.unregisterForPreviewing(withContext: previewingContext)
+		}
     }
 
     override func viewDidLoad() {
@@ -282,7 +280,6 @@ class TableViewController: UITableViewController, AXPhotosViewControllerDelegate
     }
     
     // MARK: - UIViewControllerPreviewingDelegate
-    @available(iOS 9.0, *)
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
         guard let indexPath = self.tableView.indexPathForRow(at: location),
             let cell = self.tableView.cellForRow(at: indexPath),
@@ -298,7 +295,6 @@ class TableViewController: UITableViewController, AXPhotosViewControllerDelegate
         return previewingPhotosViewController
     }
     
-    @available(iOS 9.0, *)
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
         if let previewingPhotosViewController = viewControllerToCommit as? AXPreviewingPhotosViewController {
             self.present(AXPhotosViewController(from: previewingPhotosViewController), animated: false)

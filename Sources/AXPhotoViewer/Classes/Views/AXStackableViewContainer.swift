@@ -96,11 +96,7 @@ import UIKit
     
     // MARK: - Helpers
     private func isToolbarOrNavigationBar(_ view: UIView) -> Bool {
-        #if os(iOS)
         return view is UIToolbar || view is UINavigationBar
-        #else
-        return view is UINavigationBar
-        #endif
     }
     
 }

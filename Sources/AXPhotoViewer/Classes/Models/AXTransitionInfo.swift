@@ -11,10 +11,8 @@ import UIKit
 
 @objc open class AXTransitionInfo: NSObject {
     
-    #if os(iOS)
     /// This value determines whether or not the user can dismiss the `PhotosViewController` by panning vertically.
     @objc fileprivate(set) var interactiveDismissalEnabled: Bool = true
-    #endif
     
     /// The view the the transition controller should use for contextual animation during the presentation.
     /// If the reference view that is provided is not currently visible, contextual animation will not occur.
@@ -48,7 +46,6 @@ import UIKit
     /// The duration of the transition.
     @objc public var duration: TimeInterval = 0.3
     
-    #if os(iOS)
     @objc public init(interactiveDismissalEnabled: Bool, startingView: UIImageView?, endingView: ((_ photo: AXPhotoProtocol, _ index: Int) -> UIImageView?)?) {
         super.init()
         self.commonInit(interactiveDismissalEnabled: interactiveDismissalEnabled, startingView: startingView, endingView: endingView)
@@ -61,22 +58,10 @@ import UIKit
     @objc public convenience override init() {
         self.init(interactiveDismissalEnabled: true, startingView: nil, endingView: nil)
     }
-    #else
-    @objc public init(startingView: UIImageView?, endingView: ((_ photo: AXPhotoProtocol, _ index: Int) -> UIImageView?)?) {
-        super.init()
-        self.commonInit(interactiveDismissalEnabled: false, startingView: startingView, endingView: endingView)
-    }
-    
-    @objc public convenience override init() {
-        self.init(startingView: nil, endingView: nil)
-    }
-    #endif
     
     fileprivate func commonInit(interactiveDismissalEnabled: Bool, startingView: UIImageView?, endingView: ((_ photo: AXPhotoProtocol, _ index: Int) -> UIImageView?)?) {
         
-        #if os(iOS)
         self.interactiveDismissalEnabled = interactiveDismissalEnabled
-        #endif
         
         if let startingView = startingView {
             guard startingView.bounds != .zero else {

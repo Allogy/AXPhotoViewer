@@ -36,20 +36,11 @@ import UIKit
     @objc open var defaultTitleAttributes: [NSAttributedString.Key: Any] {
         get {
             var fontDescriptor: UIFontDescriptor
-            if #available(iOS 10.0, tvOS 10.0, *) {
                 fontDescriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body,
                                                                           compatibleWith: self.traitCollection)
-            } else {
-                fontDescriptor = UIFont.preferredFont(forTextStyle: .body).fontDescriptor
-            }
             
-            var font: UIFont
-            if #available(iOS 8.2, *) {
-                font = UIFont.systemFont(ofSize: fontDescriptor.pointSize, weight: UIFont.Weight.bold)
-            } else {
-                font = UIFont(name: "HelveticaNeue-Bold", size: fontDescriptor.pointSize)!
-            }
-            
+			let font: UIFont = UIFont.systemFont(ofSize: fontDescriptor.pointSize, weight: UIFont.Weight.bold)
+
             return [
                 .font: font,
                 .foregroundColor: UIColor.white
@@ -59,20 +50,10 @@ import UIKit
     
     @objc open var defaultDescriptionAttributes: [NSAttributedString.Key: Any] {
         get {
-            var fontDescriptor: UIFontDescriptor
-            if #available(iOS 10.0, tvOS 10.0, *) {
-                fontDescriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body,
+			let fontDescriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body,
                                                                           compatibleWith: self.traitCollection)
-            } else {
-                fontDescriptor = UIFont.preferredFont(forTextStyle: .body).fontDescriptor
-            }
             
-            var font: UIFont
-            if #available(iOS 8.2, *) {
-                font = UIFont.systemFont(ofSize: fontDescriptor.pointSize, weight: UIFont.Weight.light)
-            } else {
-                font = UIFont(name: "HelveticaNeue-Light", size: fontDescriptor.pointSize)!
-            }
+			let font = UIFont.systemFont(ofSize: fontDescriptor.pointSize, weight: UIFont.Weight.light)
             
             return [
                 .font: font,
@@ -83,20 +64,10 @@ import UIKit
     
     @objc open var defaultCreditAttributes: [NSAttributedString.Key: Any] {
         get {
-            var fontDescriptor: UIFontDescriptor
-            if #available(iOS 10.0, tvOS 10.0, *) {
-                fontDescriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .caption1,
+			let fontDescriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .caption1,
                                                                           compatibleWith: self.traitCollection)
-            } else {
-                fontDescriptor = UIFont.preferredFont(forTextStyle: .caption1).fontDescriptor
-            }
             
-            var font: UIFont
-            if #available(iOS 8.2, *) {
-                font = UIFont.systemFont(ofSize: fontDescriptor.pointSize, weight: UIFont.Weight.light)
-            } else {
-                font = UIFont(name: "HelveticaNeue-Light", size: fontDescriptor.pointSize)!
-            }
+			let font = UIFont.systemFont(ofSize: fontDescriptor.pointSize, weight: UIFont.Weight.light)
             
             return [
                 .font: font,
@@ -334,17 +305,10 @@ import UIKit
             )
         }
         
-        #if os(iOS)
         let TopPadding: CGFloat = 10
         let BottomPadding: CGFloat = 10
         let HorizontalPadding: CGFloat = 15
         let InterLabelSpacing: CGFloat = 2
-        #else
-        let TopPadding: CGFloat = 30
-        let BottomPadding: CGFloat = 0
-        let HorizontalPadding: CGFloat = 0
-        let InterLabelSpacing: CGFloat = 2
-        #endif
         
         let xOffset = HorizontalPadding
         var yOffset: CGFloat = 0
@@ -409,13 +373,8 @@ import UIKit
                                                         options: [], using: { [weak self] (value, range, stop) in
             guard let oldFont = value as? UIFont else { return }
             
-            var newFontDescriptor: UIFontDescriptor
-            if #available(iOS 10.0, tvOS 10.0, *) {
-                newFontDescriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: fontTextStyle,
+			let newFontDescriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: fontTextStyle,
                                                                              compatibleWith: self?.traitCollection)
-            } else {
-                newFontDescriptor = UIFont.preferredFont(forTextStyle: fontTextStyle).fontDescriptor
-            }
             
             let newFont = oldFont.withSize(newFontDescriptor.pointSize)
             fontAdjustedAttributedString.removeAttribute(.font, range: range)

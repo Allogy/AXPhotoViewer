@@ -31,7 +31,8 @@ let package = Package(
 			dependencies: [
 				"FLAnimatedImage",
 				"AXStateButton"
-			]
+			],
+			resources: [.process("Resources")]
         ),
         .testTarget(
             name: "AXPhotoViewerTests",
