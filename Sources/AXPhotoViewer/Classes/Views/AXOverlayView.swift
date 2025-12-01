@@ -30,6 +30,9 @@ import UIKit
     /// The bar button item used internally to display the `titleView` attribute in the toolbar.
     var titleViewBarButtonItem: UIBarButtonItem?
     
+	/// The bar button item used internally to display the `title` attribute in the toolbar.
+	var titleBarButtonItem: UIBarButtonItem?
+	
     /// The title displayed in the toolbar. This string is centered between the `leftBarButtonItems` and `rightBarButtonItems`.
     /// Overwrites `internalTitle`.
     @objc public var title: String? {
@@ -52,9 +55,6 @@ import UIKit
             self.updateTitleBarButtonItem()
         }
     }
-    
-    /// The bar button item used internally to display the `title` attribute in the toolbar.
-    let titleBarButtonItem = UIBarButtonItem(customView: UILabel())
     
     /// The bar button item that appears in the top left corner of the overlay.
     @objc public var leftBarButtonItem: UIBarButtonItem? {
@@ -392,8 +392,8 @@ import UIKit
                                                 attributes: self.titleTextAttributes ?? defaultAttributes())
         }
         
-        if let attributedText = attributedText {
-            guard let titleBarButtonItemLabel = self.titleBarButtonItem.customView as? UILabel else { return }
+        if let attributedText {
+            guard let titleBarButtonItemLabel = self.titleBarButtonItem?.customView as? UILabel else { return }
             if titleBarButtonItemLabel.attributedText != attributedText {
                 titleBarButtonItemLabel.attributedText = attributedText
                 titleBarButtonItemLabel.sizeToFit()
